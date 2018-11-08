@@ -1,0 +1,11 @@
+{
+    "DotClock": 28375160,
+    "XRes": 640,
+    "YRes": 480,
+    "LeftMargin": 200,
+    "RightMargin": 70,
+    "HSyncLen": 2,
+    "UpperMargin": 20,
+    "LowerMargin": 20,
+    "VSyncLen": 9
+}
