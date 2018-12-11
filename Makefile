@@ -1,6 +1,6 @@
 EXEC = $(shell basename $(shell pwd))
 
-$(EXEC):
+$(EXEC):main.go
 	@go build -o $(EXEC)
 
 install:

@@ -19,6 +19,39 @@ type timing struct {
 	VSyncLen    int `json:"VSyncLen"`
 }
 
+// https://www.tldp.org/HOWTO/html_single/Framebuffer-HOWTO/#AEN1274
+// Modeline "1280x1024" DCF HR SH1 SH2 HFL VR SV1 SV2 VFL
+// newmode: clock hdisp hsyncstart hsyncend  htotal  vdisp vsyncstart vsyncend vtotal
+//    left_margin = HFL - SH2
+//    right_margin = SH1 - HR
+//    hsync_len = SH2 - SH1
+//    upper_margin = VFL - SV2
+//    lower_margin = SV1 - VR
+//    vsync_len = SV2 - SV1
+//
+//    HR = xres
+//    SH1 = HR + right_margin
+//    SH2 = SH1 + hsync_len
+//    HFL = SH2 + left_margin
+//    VR = yres
+//    SV1 = VR + lower_margin
+//    SV2 = SV1 + vsync_len
+//    VFL = SV2 + uppper_margin
+//
+func xorgModeline(t *timing) {
+	hr := t.XRes
+	sh1 := hr + t.RightMargin
+	sh2 := sh1 + t.HSyncLen
+	hfl := sh2 + t.LeftMargin
+
+	vr := t.YRes
+	sv1 := vr + t.LowerMargin
+	sv2 := sv1 + t.VSyncLen
+	vfl := sv2 + t.UpperMargin
+
+	fmt.Println("Xorg Modeline:", t.DotClock, hr, sh1, sh2, hfl, vr, sv1, sv2, vfl)
+}
+
 func calculate(t *timing) {
 	scanLineTime := (t.XRes + t.LeftMargin + t.RightMargin + t.HSyncLen)
 	frameTime := scanLineTime * (t.YRes + t.UpperMargin + t.LowerMargin + t.VSyncLen)
@@ -33,6 +66,7 @@ func calculate(t *timing) {
 	fmt.Printf("        Upper Maring (vbackporch): \t%d\n", t.UpperMargin)
 	fmt.Printf("        V Sync Len (vsyncwidth): \t%d\n", t.VSyncLen)
 	fmt.Println("fps:", fps, "Hz")
+	xorgModeline(t)
 }
 
 func main() {
